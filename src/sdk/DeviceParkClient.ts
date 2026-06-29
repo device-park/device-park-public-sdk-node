@@ -18,10 +18,16 @@ export class DeviceParkClient {
     this.httpClient = httpClient;
   }
 
+  /**
+   * Creates a fluent builder for the SDK client.
+   */
   public static builder(): DeviceParkClientBuilder {
     return new DeviceParkClientBuilder();
   }
 
+  /**
+   * Returns the devices API service.
+   */
   public devices(): DevicesApi {
     if (!this.devicesApi) {
       this.devicesApi = new DevicesApi(this.httpClient);
@@ -30,6 +36,9 @@ export class DeviceParkClient {
     return this.devicesApi;
   }
 
+  /**
+   * Returns the pools API service.
+   */
   public pools(): PoolsApi {
     if (!this.poolsApi) {
       this.poolsApi = new PoolsApi(this.httpClient);
@@ -38,6 +47,9 @@ export class DeviceParkClient {
     return this.poolsApi;
   }
 
+  /**
+   * Returns the allocations API service.
+   */
   public allocations(): AllocationsApi {
     if (!this.allocationsApi) {
       this.allocationsApi = new AllocationsApi(this.httpClient);
@@ -46,6 +58,9 @@ export class DeviceParkClient {
     return this.allocationsApi;
   }
 
+  /**
+   * Returns the sessions API service.
+   */
   public sessions(): SessionsApi {
     if (!this.sessionsApi) {
       this.sessionsApi = new SessionsApi(this.httpClient);
@@ -54,6 +69,9 @@ export class DeviceParkClient {
     return this.sessionsApi;
   }
 
+  /**
+   * Returns the applications API service.
+   */
   public applications(): ApplicationsApi {
     if (!this.applicationsApi) {
       this.applicationsApi = new ApplicationsApi(this.httpClient);
@@ -62,6 +80,12 @@ export class DeviceParkClient {
     return this.applicationsApi;
   }
 
+  /**
+   * Closes SDK resources.
+   *
+   * The current Node.js implementation does not keep a long-lived socket pool,
+   * but the method is preserved for API parity.
+   */
   public async close(): Promise<void> {
     await this.httpClient.close();
   }

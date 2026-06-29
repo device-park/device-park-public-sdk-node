@@ -13,11 +13,11 @@ npm install @devicepark/public-sdk
 ```ts
 import {
   Credentials,
-  DeviceParkManagementClient,
+  DeviceParkApiClient,
   ListDevicesRequestBuilder
 } from "@devicepark/public-sdk";
 
-const client = DeviceParkManagementClient.builder()
+const client = DeviceParkApiClient.builder()
   .url("https://dev-devicepark.testinium.io")
   .credentials(Credentials.create("your-client-id", "your-client-secret"))
   .build();
@@ -33,9 +33,9 @@ await client.close();
 ## Authentication
 
 ```ts
-import { Credentials, DeviceParkManagementClient } from "@devicepark/public-sdk";
+import { Credentials, DeviceParkApiClient } from "@devicepark/public-sdk";
 
-const client = DeviceParkManagementClient.builder()
+const client = DeviceParkApiClient.builder()
   .url("https://dev-devicepark.testinium.io")
   .credentials(Credentials.fromEnvironment())
   .build();

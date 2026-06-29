@@ -1,9 +1,9 @@
-import { Credentials } from "./auth/Credentials.js";
-import { DeviceParkHttpClient } from "./http/DeviceParkHttpClient.js";
-import { DeviceParkConfigError } from "./errors/index.js";
-import { DeviceParkClient } from "./DeviceParkClient.js";
+import { Credentials } from "./authentication/credentials/Credentials.js";
+import { DeviceParkHttpClient } from "./client/DeviceParkHttpClient.js";
+import { DeviceParkConfigError } from "./sdk/errors/index.js";
+import { DeviceParkApiClient } from "./DeviceParkApiClient.js";
 
-export interface DeviceParkClientOptions {
+export interface DeviceParkApiClientOptions {
   url?: string;
   credentials?: Credentials;
   timeoutMs?: number;
@@ -11,8 +11,11 @@ export interface DeviceParkClientOptions {
   fetchImplementation?: typeof fetch;
 }
 
-export class DeviceParkClientBuilder {
-  private options: DeviceParkClientOptions = {
+/**
+ * Fluent builder for {@link DeviceParkApiClient}.
+ */
+export class DeviceParkApiClientBuilder {
+  private options: DeviceParkApiClientOptions = {
     timeoutMs: 60_000,
     headers: {}
   };
@@ -22,9 +25,6 @@ export class DeviceParkClientBuilder {
     return this;
   }
 
-  /**
-   * Alias for {@link url} kept for readability in some integrations.
-   */
   public endpoint(url: string): this {
     return this.url(url);
   }
@@ -63,7 +63,7 @@ export class DeviceParkClientBuilder {
     return this;
   }
 
-  public build(): DeviceParkClient {
+  public build(): DeviceParkApiClient {
     const url = this.options.url?.trim();
     const credentials = this.options.credentials;
 
@@ -91,6 +91,6 @@ export class DeviceParkClientBuilder {
         : httpClientOptions
     );
 
-    return new DeviceParkClient(httpClient);
+    return new DeviceParkApiClient(httpClient);
   }
 }
