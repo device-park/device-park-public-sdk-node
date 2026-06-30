@@ -11,6 +11,11 @@ export interface DeviceStartSessionRequest {
   appiumVersion?: string;
 }
 
+/**
+ * Builder for starting a new session.
+ *
+ * `videoRecording` defaults to `false`.
+ */
 export class DeviceStartSessionRequestBuilder {
   private readonly request: DeviceStartSessionRequest = {
     videoRecording: false

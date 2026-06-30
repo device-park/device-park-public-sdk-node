@@ -10,6 +10,11 @@ export interface DeviceAllocationRequest {
   priority: number;
 }
 
+/**
+ * Builder for creating a new device allocation request.
+ *
+ * Priority defaults to `3` and must stay in the range `1..5`.
+ */
 export class DeviceAllocationRequestBuilder {
   private readonly request: DeviceAllocationRequest = {
     priority: 3

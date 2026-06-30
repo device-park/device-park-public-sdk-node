@@ -9,6 +9,9 @@ export interface ApplicationPaginationRequest {
   sorting: Sorting;
 }
 
+/**
+ * Builder for the applications list request.
+ */
 export class ApplicationPaginationRequestBuilder {
   private readonly request: ApplicationPaginationRequest = {
     filters: [],

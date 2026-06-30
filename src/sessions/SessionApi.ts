@@ -20,6 +20,10 @@ const SCREEN_RECORDS_PATH = "/storage/api/v1/public/sessions";
 
 /**
  * Session API service.
+ *
+ * Base paths:
+ * - `/session/api/v2/public/sessions`
+ * - `/storage/api/v1/public/sessions/{sessionId}/screen-records`
  */
 export class SessionApi {
   private readonly deviceParkHttpClient: DeviceParkHttpClient;
@@ -28,6 +32,9 @@ export class SessionApi {
     this.deviceParkHttpClient = deviceParkHttpClient;
   }
 
+  /**
+   * Lists sessions with pagination and sorting options.
+   */
   public async list(request?: DeviceSessionRequest): Promise<PageDto<Session>> {
     const nextRequest = request ?? new DeviceSessionRequestBuilder().build();
     const response = await this.deviceParkHttpClient.get(
@@ -38,6 +45,9 @@ export class SessionApi {
     return JsonMapper.fromJson<PageDto<Session>>(response);
   }
 
+  /**
+   * Starts a new session for an allocation.
+   */
   public async start(request: DeviceStartSessionRequest): Promise<Session> {
     if (!request) {
       throw new DeviceParkConfigError("request is required");
@@ -47,11 +57,17 @@ export class SessionApi {
     return JsonMapper.fromJson<Session>(response);
   }
 
+  /**
+   * Stops an active session by id.
+   */
   public async stop(sessionId: string): Promise<void> {
     this.assertSessionId(sessionId);
     await this.deviceParkHttpClient.delete(`${SESSION_PATH}/${encodeURIComponent(sessionId)}`);
   }
 
+  /**
+   * Downloads the Appium log output for the given session.
+   */
   public async logs(sessionId: string): Promise<Buffer> {
     this.assertSessionId(sessionId);
     return this.deviceParkHttpClient.getBytes(
@@ -59,6 +75,9 @@ export class SessionApi {
     );
   }
 
+  /**
+   * Lists screen records generated for the given session.
+   */
   public async screenRecords(
     sessionId: string,
     request?: ScreenRecordPaginationRequest

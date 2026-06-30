@@ -9,6 +9,9 @@ export interface AllocationSearchRequest {
   sorting: Sorting;
 }
 
+/**
+ * Builder for the allocations list request.
+ */
 export class AllocationSearchRequestBuilder {
   private readonly request: AllocationSearchRequest = {
     filters: [],

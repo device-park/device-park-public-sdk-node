@@ -7,6 +7,8 @@ import { createPaginationQuery } from "../../sdk/core/requestMapping.js";
 
 /**
  * Pools API service.
+ *
+ * Base path: `/management/api/v1/public/pools`
  */
 export class PoolsApi {
   private readonly deviceParkHttpClient: DeviceParkHttpClient;
@@ -15,6 +17,9 @@ export class PoolsApi {
     this.deviceParkHttpClient = deviceParkHttpClient;
   }
 
+  /**
+   * Lists device pools with pagination and sorting options.
+   */
   public async list(request?: ListPoolsRequest): Promise<PageDto<Pool>> {
     const nextRequest = request ?? new ListPoolsRequestBuilder().build();
     const response = await this.deviceParkHttpClient.get(

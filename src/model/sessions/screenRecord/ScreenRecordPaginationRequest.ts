@@ -9,6 +9,9 @@ export interface ScreenRecordPaginationRequest {
   sorting: Sorting;
 }
 
+/**
+ * Builder for the screen records list request.
+ */
 export class ScreenRecordPaginationRequestBuilder {
   private readonly request: ScreenRecordPaginationRequest = {
     filters: [],

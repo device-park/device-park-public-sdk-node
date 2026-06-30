@@ -21,6 +21,12 @@ interface RequestOptions {
 
 /**
  * Shared HTTP transport used by all API services.
+ *
+ * Responsibilities:
+ * - fetch and cache OAuth2 access tokens
+ * - attach authorization headers automatically
+ * - execute JSON and binary requests
+ * - normalize non-2xx responses into SDK errors
  */
 export class DeviceParkHttpClient {
   private readonly baseUrl: string;
@@ -43,6 +49,9 @@ export class DeviceParkHttpClient {
     this.fetchImplementation = options.fetchImplementation ?? fetch;
   }
 
+  /**
+   * Executes a GET request and returns the raw response body as text.
+   */
   public async get(
     path: string,
     query?: Record<string, string | number | boolean | null | undefined>,
@@ -58,6 +67,9 @@ export class DeviceParkHttpClient {
     return this.request("GET", path, options);
   }
 
+  /**
+   * Executes a JSON POST request and returns the raw response body as text.
+   */
   public async post(path: string, body?: unknown, headers?: Record<string, string>): Promise<string> {
     const options: RequestOptions = {
       headers: {
@@ -73,10 +85,16 @@ export class DeviceParkHttpClient {
     return this.request("POST", path, options);
   }
 
+  /**
+   * Executes a DELETE request and returns the raw response body as text.
+   */
   public async delete(path: string, headers?: Record<string, string>): Promise<string> {
     return this.request("DELETE", path, headers ? { headers } : {});
   }
 
+  /**
+   * Executes an octet-stream POST request.
+   */
   public async postStream(
     path: string,
     body: NodeJS.ReadableStream | ReadableStream,
@@ -91,11 +109,17 @@ export class DeviceParkHttpClient {
     });
   }
 
+  /**
+   * Executes a GET request and returns the raw response body as bytes.
+   */
   public async getBytes(path: string): Promise<Buffer> {
     const response = await this.execute("GET", path, {});
     return Buffer.from(await response.arrayBuffer());
   }
 
+  /**
+   * Closes the transport lifecycle.
+   */
   public async close(): Promise<void> {
     return Promise.resolve();
   }

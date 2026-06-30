@@ -14,6 +14,8 @@ const ALLOCATION_PATH = "/allocation/api/v2/public/allocations";
 
 /**
  * Allocation API service.
+ *
+ * Base path: `/allocation/api/v2/public/allocations`
  */
 export class AllocationApi {
   private readonly deviceParkHttpClient: DeviceParkHttpClient;
@@ -22,6 +24,9 @@ export class AllocationApi {
     this.deviceParkHttpClient = deviceParkHttpClient;
   }
 
+  /**
+   * Lists allocations with pagination and sorting options.
+   */
   public async list(request?: AllocationSearchRequest): Promise<PageDto<Allocation>> {
     const nextRequest = request ?? new AllocationSearchRequestBuilder().build();
     const response = await this.deviceParkHttpClient.get(
@@ -32,6 +37,9 @@ export class AllocationApi {
     return JsonMapper.fromJson<PageDto<Allocation>>(response);
   }
 
+  /**
+   * Creates a new allocation request for a device or device pool.
+   */
   public async create(request: DeviceAllocationRequest): Promise<Allocation> {
     if (!request) {
       throw new DeviceParkConfigError("request is required");
@@ -41,6 +49,9 @@ export class AllocationApi {
     return JsonMapper.fromJson<Allocation>(response);
   }
 
+  /**
+   * Deletes an existing allocation by id.
+   */
   public async delete(allocationId: string): Promise<void> {
     if (!allocationId.trim()) {
       throw new DeviceParkConfigError("allocationId cannot be empty");

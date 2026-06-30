@@ -9,6 +9,9 @@ export interface DeviceSessionRequest {
   sorting: Sorting;
 }
 
+/**
+ * Builder for the sessions list request.
+ */
 export class DeviceSessionRequestBuilder {
   private readonly request: DeviceSessionRequest = {
     filters: [],

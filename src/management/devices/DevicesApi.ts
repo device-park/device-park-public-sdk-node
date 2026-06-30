@@ -7,6 +7,8 @@ import { createPaginationQuery } from "../../sdk/core/requestMapping.js";
 
 /**
  * Devices API service.
+ *
+ * Base path: `/management/api/v1/public/devices`
  */
 export class DevicesApi {
   private readonly deviceParkHttpClient: DeviceParkHttpClient;
@@ -15,6 +17,11 @@ export class DevicesApi {
     this.deviceParkHttpClient = deviceParkHttpClient;
   }
 
+  /**
+   * Lists visible devices with pagination and sorting options.
+   *
+   * When no request is provided, default pagination values are used.
+   */
   public async list(request?: ListDevicesRequest): Promise<PageDto<Device>> {
     const nextRequest = request ?? new ListDevicesRequestBuilder().build();
     const response = await this.deviceParkHttpClient.get(
@@ -25,6 +32,9 @@ export class DevicesApi {
     return JsonMapper.fromJson<PageDto<Device>>(response);
   }
 
+  /**
+   * Fetches a single device by its serial number.
+   */
   public async get(serial: string): Promise<Device> {
     const response = await this.deviceParkHttpClient.get(
       `/management/api/v1/public/devices/${encodeURIComponent(serial)}`

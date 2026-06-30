@@ -9,6 +9,12 @@ export interface ListDevicesRequest {
   sorting: Sorting;
 }
 
+/**
+ * Builder for the devices list request.
+ *
+ * The request carries filter, pagination and sorting data for
+ * `GET /management/api/v1/public/devices`.
+ */
 export class ListDevicesRequestBuilder {
   private readonly request: ListDevicesRequest = {
     filters: [],
@@ -35,6 +41,9 @@ export class ListDevicesRequestBuilder {
     return this;
   }
 
+  /**
+   * Adds a single filter rule to the request.
+   */
   public addFilter(
     key: (typeof DeviceFilter)[keyof typeof DeviceFilter],
     value: unknown,

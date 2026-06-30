@@ -13,6 +13,8 @@ const APPLICATION_PATH = "/storage/api/v1/public/applications";
 
 /**
  * Application API service.
+ *
+ * Base path: `/storage/api/v1/public/applications`
  */
 export class ApplicationApi {
   private readonly deviceParkHttpClient: DeviceParkHttpClient;
@@ -21,6 +23,9 @@ export class ApplicationApi {
     this.deviceParkHttpClient = deviceParkHttpClient;
   }
 
+  /**
+   * Lists uploaded applications with pagination and sorting options.
+   */
   public async list(request?: ApplicationPaginationRequest): Promise<PageDto<Application>> {
     const nextRequest = request ?? new ApplicationPaginationRequestBuilder().build();
     const response = await this.deviceParkHttpClient.get(
@@ -31,6 +36,11 @@ export class ApplicationApi {
     return JsonMapper.fromJson<PageDto<Application>>(response);
   }
 
+  /**
+   * Uploads an application as `application/octet-stream`.
+   *
+   * The provided version must be non-empty and at most 50 characters.
+   */
   public async upload(
     fileStream: NodeJS.ReadableStream | ReadableStream,
     fileName: string,
@@ -56,6 +66,9 @@ export class ApplicationApi {
     return JsonMapper.fromJson<Application>(response);
   }
 
+  /**
+   * Deletes an application and its revisions by file key.
+   */
   public async delete(fileKey: string): Promise<void> {
     if (!fileKey.trim()) {
       throw new DeviceParkConfigError("fileKey cannot be empty");

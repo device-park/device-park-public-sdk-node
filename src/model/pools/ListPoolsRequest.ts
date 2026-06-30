@@ -9,6 +9,9 @@ export interface ListPoolsRequest {
   sorting: Sorting;
 }
 
+/**
+ * Builder for the pools list request.
+ */
 export class ListPoolsRequestBuilder {
   private readonly request: ListPoolsRequest = {
     filters: [],
