@@ -1,0 +1,26 @@
+export interface Session {
+  id: number | null;
+  state: string | null;
+  client: string | null;
+  sessionId: string | null;
+  allocationId: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  latestInteractionTime: string | null;
+  userId: number | null;
+  userEmail: string | null;
+  companyId: number | null;
+  companyName: string | null;
+  deviceSerial: string | null;
+  deviceName: string | null;
+  deviceModel: string | null;
+  deviceManufacturer: string | null;
+  devicePlatform: string | null;
+  deviceVersion: string | null;
+  videoRecording: boolean | null;
+  videoRecordUrl: string | null;
+  appiumVersion: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+  dataAccessEndDate: string | null;
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@devicepark/public-sdk",
+  "version": "1.0.0",
+  "description": "Official Node.js SDK for the Device Park public APIs.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "prepack": "npm run build",
+    "test": "node --test dist/**/*.test.js",
+    "pretest": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "typescript": "^5.9.2"
+  }
+}
