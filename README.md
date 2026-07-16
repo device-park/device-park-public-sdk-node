@@ -18,7 +18,7 @@ import {
 } from "@devicepark/public-sdk";
 
 const client = DeviceParkApiClient.builder()
-  .url("https://dev-devicepark.testinium.io")
+  .url("https://devicepark.testinium.io")
   .credentials(Credentials.create("your-client-id", "your-client-secret"))
   .build();
 
@@ -36,7 +36,7 @@ await client.close();
 import { Credentials, DeviceParkApiClient } from "@devicepark/public-sdk";
 
 const client = DeviceParkApiClient.builder()
-  .url("https://dev-devicepark.testinium.io")
+  .url("https://devicepark.testinium.io")
   .credentials(Credentials.fromEnvironment())
   .build();
 ```
@@ -48,6 +48,23 @@ const client = DeviceParkApiClient.builder()
 - `client.allocations()`
 - `client.sessions()`
 - `client.applications()`
+
+## Image Injection
+
+Application uploads use standard processing by default. Pass `true` as the fourth argument when the workflow requires Device Park gadget injection:
+
+```ts
+import { createReadStream } from "node:fs";
+
+const application = await client.applications().upload(
+  createReadStream("/path/to/mobile-app.apk"),
+  "mobile-app.apk",
+  "1.0.0",
+  true
+);
+```
+
+`Device` responses also expose nullable `isSimulator` and `isPublic` fields.
 
 ## Notes
 

@@ -44,7 +44,8 @@ export class ApplicationApi {
   public async upload(
     fileStream: NodeJS.ReadableStream | ReadableStream,
     fileName: string,
-    version: string
+    version: string,
+    imageInjection = false
   ): Promise<Application> {
     if (!fileName.trim()) {
       throw new DeviceParkConfigError("fileName cannot be empty");
@@ -60,7 +61,8 @@ export class ApplicationApi {
 
     const response = await this.deviceParkHttpClient.postStream(APPLICATION_PATH, fileStream, {
       "file-name": fileName,
-      version
+      version,
+      "image-injection": String(imageInjection)
     });
 
     return JsonMapper.fromJson<Application>(response);

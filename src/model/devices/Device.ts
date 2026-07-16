@@ -8,4 +8,6 @@ export interface Device {
   platformVersion: string | null;
   version: string | null;
   state: string | null;
+  isSimulator: boolean | null;
+  isPublic: boolean | null;
 }
