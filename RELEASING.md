@@ -1,6 +1,17 @@
 # Releasing
 
-The package is published as `@devicepark/public-sdk` on the public npm registry.
+This repository produces the official `device-park-public-sdk` package for the public npm registry. It is a new SDK package and is independent from the legacy `@devicepark/*` packages.
+
+## Package Identity
+
+| Field | Value |
+|---|---|
+| npm package | `device-park-public-sdk` |
+| npm registry | `https://registry.npmjs.org/` |
+| access | Public |
+| Java artifact | `io.testinium.devicepark:device-park-public-sdk` |
+
+The npm package name intentionally matches the Java SDK `artifactId`.
 
 ## Release Requirements
 
@@ -20,13 +31,13 @@ npm pack --dry-run
 npm publish
 ```
 
-`publishConfig` keeps the package public and targets `https://registry.npmjs.org/`.
+Unscoped npm packages are public. `publishConfig` explicitly targets `https://registry.npmjs.org/`.
 
 ## Post-Release Verification
 
 ```bash
-npm view @devicepark/public-sdk version
-npm install @devicepark/public-sdk
+npm view device-park-public-sdk version
+npm install device-park-public-sdk
 ```
 
 Confirm that a clean consumer project can import `DeviceParkApiClient` before announcing the release.
