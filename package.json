@@ -2,8 +2,17 @@
   "name": "@devicepark/public-sdk",
   "version": "1.0.0",
   "description": "Official Node.js SDK for the Device Park public APIs.",
+  "keywords": [
+    "device-park",
+    "mobile-testing",
+    "appium",
+    "sdk",
+    "test-automation"
+  ],
+  "author": "Device Park Team",
   "license": "MIT",
   "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -13,14 +22,29 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/**/*.test.*"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/device-park/device-park-public-sdk-node.git"
+  },
+  "homepage": "https://github.com/device-park/device-park-public-sdk-node#readme",
+  "bugs": {
+    "url": "https://github.com/device-park/device-park-public-sdk-node/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc -p tsconfig.build.json",
     "check": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "npm run check && npm test",
     "prepack": "npm run build",
     "test": "node --test dist/**/*.test.js",
     "pretest": "npm run build"
