@@ -1,5 +1,5 @@
 {
-  "name": "device-park-public-sdk",
+  "name": "@device-park/public-sdk",
   "version": "1.0.0",
   "description": "Official Node.js SDK for the Device Park public APIs.",
   "keywords": [
