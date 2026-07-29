@@ -1,38 +1,63 @@
-name: Publish to NPM
+name: Publish Tagged Release to NPM
 
 on:
-  workflow_dispatch:
-
-  push:
-    branches:
-      - master
-
   release:
     types:
       - published
 
 permissions:
-  contents: read
-  id-token: write 
+  contents: read # Genel okuma izni (Yazma işlemini GH_PAT yapacak)
+  id-token: write # NPM Provenance için gerekli
 
 jobs:
   publish:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          # GITHUB_TOKEN yerine PAT kullanarak repo yazma kısıtlamasını aşıyoruz
+          token: ${{ secrets.GH_PAT }}
+          fetch-depth: 0
 
-      - name: Set up Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Extract version from Tag
+        id: get_version
+        run: |
+          # 'v1.0.1' -> '1.0.1' (başındaki 'v' harfini temizler)
+          TAG_NAME="${{ github.ref_name }}"
+          VERSION="${TAG_NAME#v}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Release Version: $VERSION"
+
+      - name: Update package.json Version
+        run: |
+          # package.json versiyonunu Git tag'i ile eşitle (lokal git tag atmadan)
+          npm version ${{ env.VERSION }} --no-git-tag-version
 
       - name: Install dependencies
         run: npm ci
 
+      # NPM'e yayınlama (prepack/build ve prepublishOnly/check-test otomatik tetiklenir)
       - name: Publish to NPM
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Commit updated package.json back to master
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Eğer package.json değiastyse master branch'ine push et
+          if ! git diff --quiet package.json; then
+            git add package.json package-lock.json
+            git commit -m "chore(release): bump version to ${{ env.VERSION }} [skip ci]"
+            git push origin HEAD:master
+          fi
