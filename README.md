@@ -7,8 +7,9 @@ The SDK provides typed clients for discovering devices, selecting device pools, 
 ## Capabilities
 
 - List devices and retrieve current device details.
-- List device pools available to the authenticated account.
+- List device pools and identify the default pool.
 - Reserve an exact device, a device pool or a device matching platform criteria.
+- Optionally remove non-default applications before device allocation.
 - Inspect active and queued allocations.
 - Start multiple sequential sessions from the same active allocation.
 - Stop sessions and collect Appium logs or screen recordings.
@@ -25,7 +26,7 @@ The SDK provides typed clients for discovering devices, selecting device pools, 
 ## Installation
 
 ```bash
-npm install device-park-public-sdk
+npm install @device-park/public-sdk
 ```
 
 The package includes ESM JavaScript and TypeScript declarations.
@@ -45,7 +46,7 @@ Create one client for the test run and reuse it:
 import {
   Credentials,
   DeviceParkApiClient
-} from "device-park-public-sdk";
+} from "@device-park/public-sdk";
 
 const client = DeviceParkApiClient.builder()
   .url("https://devicepark.testinium.io")
@@ -77,7 +78,7 @@ import {
   DeviceParkApiClient,
   DeviceStartSessionRequestBuilder,
   ListDevicesRequestBuilder
-} from "device-park-public-sdk";
+} from "@device-park/public-sdk";
 
 const client = DeviceParkApiClient.builder()
   .url("https://devicepark.testinium.io")
@@ -173,12 +174,38 @@ Stop the current session before starting the next unless concurrent sessions are
 | Service | Purpose | Main methods |
 |---|---|---|
 | `client.devices()` | Discover and inspect devices | `list`, `get` |
-| `client.pools()` | Discover managed device pools | `list` |
+| `client.pools()` | Discover managed device pools | `list`, `listByDefaultPool` |
 | `client.allocations()` | Reserve and release devices | `create`, `list`, `delete` |
 | `client.sessions()` | Manage test sessions and artifacts | `start`, `list`, `stop`, `logs`, `screenRecords` |
 | `client.applications()` | Manage APK and IPA artifacts | `upload`, `list`, `delete` |
 
 List methods return `PageDto<T>` with `page`, `size`, `totalPages`, `totalElements` and `data`.
+
+List the default pool while retaining pagination and sorting options:
+
+```typescript
+import { ListPoolsRequestBuilder } from "@device-park/public-sdk";
+
+const defaultPools = await client.pools().listByDefaultPool(
+  new ListPoolsRequestBuilder().page(0).size(20).build()
+);
+
+console.log(defaultPools.data[0]?.isDefault);
+```
+
+Allocation requests keep installed applications by default. Remove only non-default applications when the workflow requires a clean device:
+
+```typescript
+import {
+  DeviceAllocationRequestBuilder,
+  RemoveAppSelection
+} from "@device-park/public-sdk";
+
+const request = new DeviceAllocationRequestBuilder()
+  .devicePoolId("android-regression")
+  .removeApps(RemoveAppSelection.REMOVE_WITHOUT_IS_DEFAULT_APPS)
+  .build();
+```
 
 ## Upload an Application
 
@@ -216,7 +243,7 @@ import {
   DeviceParkConfigError,
   DeviceParkHttpError,
   DeviceParkSerializationError
-} from "device-park-public-sdk";
+} from "@device-park/public-sdk";
 
 try {
   const devices = await client.devices().list();

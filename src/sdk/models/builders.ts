@@ -19,6 +19,10 @@ import type {
   ListPoolsRequest,
   ScreenRecordPaginationRequest
 } from "./requests.js";
+import {
+  RemoveAppSelection,
+  type RemoveAppSelectionType
+} from "../../model/allocation/RemoveAppSelection.js";
 
 abstract class PaginationRequestBuilder<
   TRequest extends { filters: TFilter[]; sorting: ReturnType<typeof createDefaultSorting> },
@@ -157,7 +161,10 @@ export class ScreenRecordPaginationRequestBuilder extends PaginationRequestBuild
 }
 
 export class DeviceAllocationRequestBuilder {
-  private readonly request: DeviceAllocationRequest = { priority: 3 };
+  private readonly request: DeviceAllocationRequest = {
+    priority: 3,
+    removeApps: RemoveAppSelection.NO_REMOVE
+  };
 
   public serial(serial: string): this {
     this.request.serial = serial;
@@ -195,6 +202,11 @@ export class DeviceAllocationRequestBuilder {
     }
 
     this.request.priority = priority;
+    return this;
+  }
+
+  public removeApps(removeApps: RemoveAppSelectionType): this {
+    this.request.removeApps = removeApps;
     return this;
   }
 
