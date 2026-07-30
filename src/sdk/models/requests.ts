@@ -7,6 +7,7 @@ import type {
   PoolFilterRequest,
   ScreenRecordFilterRequest
 } from "./filterRequests.js";
+import type { RemoveAppSelectionType } from "../../model/allocation/RemoveAppSelection.js";
 
 export interface ListDevicesRequest {
   filters: DeviceFilterRequest[];
@@ -36,6 +37,7 @@ export interface DeviceAllocationRequest {
   platformVersion?: string;
   devicePoolId?: string;
   priority: number;
+  removeApps: RemoveAppSelectionType;
 }
 
 export interface DeviceSessionRequest {
