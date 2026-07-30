@@ -11,7 +11,8 @@ export const DeviceFilter = {
 } as const;
 
 export const PoolFilter = {
-  NAME: "NAME"
+  NAME: "NAME",
+  IS_DEFAULT: "IS_DEFAULT"
 } as const;
 
 export const ApplicationFilter = {

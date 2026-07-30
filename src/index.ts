@@ -12,6 +12,10 @@ export { SortDirection } from "./model/common/SortDirection.js";
 export type { PageDto } from "./model/common/PageDto.js";
 export type { Sorting } from "./model/common/Sorting.js";
 export { AllocationFilter } from "./model/allocation/AllocationFilter.js";
+export {
+  RemoveAppSelection,
+  type RemoveAppSelectionType
+} from "./model/allocation/RemoveAppSelection.js";
 export { ApplicationFilter } from "./model/applications/ApplicationFilter.js";
 export { DeviceFilter } from "./model/devices/DeviceFilter.js";
 export { PoolFilter } from "./model/pools/PoolFilter.js";

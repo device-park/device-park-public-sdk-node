@@ -1,4 +1,8 @@
 import { DeviceParkConfigError } from "../../sdk/errors/index.js";
+import {
+  RemoveAppSelection,
+  type RemoveAppSelectionType
+} from "./RemoveAppSelection.js";
 
 export interface DeviceAllocationRequest {
   serial?: string;
@@ -8,6 +12,7 @@ export interface DeviceAllocationRequest {
   platformVersion?: string;
   devicePoolId?: string;
   priority: number;
+  removeApps: RemoveAppSelectionType;
 }
 
 /**
@@ -17,7 +22,8 @@ export interface DeviceAllocationRequest {
  */
 export class DeviceAllocationRequestBuilder {
   private readonly request: DeviceAllocationRequest = {
-    priority: 3
+    priority: 3,
+    removeApps: RemoveAppSelection.NO_REMOVE
   };
 
   public serial(serial: string): this {
@@ -56,6 +62,11 @@ export class DeviceAllocationRequestBuilder {
     }
 
     this.request.priority = priority;
+    return this;
+  }
+
+  public removeApps(removeApps: RemoveAppSelectionType): this {
+    this.request.removeApps = removeApps;
     return this;
   }
 

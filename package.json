@@ -1,6 +1,6 @@
 {
   "name": "@device-park/public-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Official Node.js SDK for the Device Park public APIs.",
   "keywords": [
     "device-park",
@@ -46,7 +46,7 @@
     "check": "tsc -p tsconfig.json --noEmit",
     "prepublishOnly": "npm run check && npm test",
     "prepack": "npm run build",
-    "test": "node --test dist/**/*.test.js",
+    "test": "node --test \"dist/**/*.test.js\"",
     "pretest": "npm run build"
   },
   "devDependencies": {
