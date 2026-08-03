@@ -46,14 +46,13 @@ export interface DeviceSessionRequest {
 }
 
 export interface DeviceStartSessionRequest {
-  allocationId?: string;
+  allocationId: string;
   companyPoolId?: string;
-  sessionId?: string;
-  videoRecording: boolean;
-  userId?: number;
-  userEmail?: string;
-  companyId?: number;
-  companyName?: string;
+  videoRecording?: boolean;
+  userId: number;
+  userEmail: string;
+  companyId: number;
+  companyName: string;
   customVideoRecordingPath?: string;
   appiumVersion?: string;
 }

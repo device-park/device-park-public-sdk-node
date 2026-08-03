@@ -216,7 +216,7 @@ export class DeviceAllocationRequestBuilder {
 }
 
 export class DeviceStartSessionRequestBuilder {
-  private readonly request: DeviceStartSessionRequest = {
+  private readonly request: Partial<DeviceStartSessionRequest> = {
     videoRecording: false
   };
 
@@ -227,11 +227,6 @@ export class DeviceStartSessionRequestBuilder {
 
   public companyPoolId(companyPoolId: string): this {
     this.request.companyPoolId = companyPoolId;
-    return this;
-  }
-
-  public sessionId(sessionId: string): this {
-    this.request.sessionId = sessionId;
     return this;
   }
 
@@ -271,6 +266,24 @@ export class DeviceStartSessionRequestBuilder {
   }
 
   public build(): DeviceStartSessionRequest {
-    return { ...this.request };
+    const requiredFields = [
+      "allocationId",
+      "userId",
+      "userEmail",
+      "companyId",
+      "companyName"
+    ] as const;
+
+    for (const field of requiredFields) {
+      if (this.request[field] === undefined || this.request[field] === null) {
+        throw new DeviceParkConfigError(`${field} is required`);
+      }
+    }
+
+    if (!this.request.companyName?.trim()) {
+      throw new DeviceParkConfigError("companyName cannot be blank");
+    }
+
+    return { ...this.request } as DeviceStartSessionRequest;
   }
 }
