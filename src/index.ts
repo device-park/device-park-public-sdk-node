@@ -44,6 +44,7 @@ export { DeviceSessionRequestBuilder } from "./model/sessions/DeviceSessionReque
 export { DeviceStartSessionRequestBuilder } from "./model/sessions/DeviceStartSessionRequest.js";
 export { ListDevicesRequestBuilder } from "./model/devices/ListDevicesRequest.js";
 export { ListPoolsRequestBuilder } from "./model/pools/ListPoolsRequest.js";
+export { CreatePoolRequestBuilder } from "./model/pools/CreatePoolRequest.js";
 export {
   ScreenRecordPaginationRequestBuilder
 } from "./model/sessions/screenRecord/ScreenRecordPaginationRequest.js";
@@ -58,6 +59,7 @@ export type {
 } from "./model/sessions/DeviceStartSessionRequest.js";
 export type { ListDevicesRequest } from "./model/devices/ListDevicesRequest.js";
 export type { ListPoolsRequest } from "./model/pools/ListPoolsRequest.js";
+export type { CreatePoolRequest } from "./model/pools/CreatePoolRequest.js";
 export type {
   ScreenRecordPaginationRequest
 } from "./model/sessions/screenRecord/ScreenRecordPaginationRequest.js";

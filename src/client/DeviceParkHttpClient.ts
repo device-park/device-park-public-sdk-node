@@ -4,6 +4,7 @@ import { Credentials } from "../authentication/credentials/Credentials.js";
 import { AccessToken, type AccessTokenResponse } from "../authentication/token/AccessToken.js";
 import { JsonMapper } from "../core/json/JsonMapper.js";
 import { DeviceParkConfigError, DeviceParkHttpError } from "../sdk/errors/index.js";
+import type { QueryValue } from "../sdk/core/query.js";
 
 export interface HttpClientOptions {
   baseUrl: string;
@@ -16,7 +17,7 @@ export interface HttpClientOptions {
 interface RequestOptions {
   body?: BodyInit;
   headers?: Record<string, string>;
-  query?: Record<string, string | number | boolean | null | undefined>;
+  query?: Record<string, QueryValue>;
 }
 
 /**
@@ -54,7 +55,7 @@ export class DeviceParkHttpClient {
    */
   public async get(
     path: string,
-    query?: Record<string, string | number | boolean | null | undefined>,
+    query?: Record<string, QueryValue>,
     headers?: Record<string, string>
   ): Promise<string> {
     const options: RequestOptions = {};
@@ -70,7 +71,12 @@ export class DeviceParkHttpClient {
   /**
    * Executes a JSON POST request and returns the raw response body as text.
    */
-  public async post(path: string, body?: unknown, headers?: Record<string, string>): Promise<string> {
+  public async post(
+    path: string,
+    body?: unknown,
+    query?: Record<string, QueryValue>,
+    headers?: Record<string, string>
+  ): Promise<string> {
     const options: RequestOptions = {
       headers: {
         "content-type": "application/json",
@@ -81,6 +87,9 @@ export class DeviceParkHttpClient {
     if (body !== undefined) {
       options.body = JsonMapper.toJson(body);
     }
+    if (query) {
+      options.query = query;
+    }
 
     return this.request("POST", path, options);
   }
@@ -88,8 +97,19 @@ export class DeviceParkHttpClient {
   /**
    * Executes a DELETE request and returns the raw response body as text.
    */
-  public async delete(path: string, headers?: Record<string, string>): Promise<string> {
-    return this.request("DELETE", path, headers ? { headers } : {});
+  public async delete(
+    path: string,
+    query?: Record<string, QueryValue>,
+    headers?: Record<string, string>
+  ): Promise<string> {
+    const options: RequestOptions = {};
+    if (query) {
+      options.query = query;
+    }
+    if (headers) {
+      options.headers = headers;
+    }
+    return this.request("DELETE", path, options);
   }
 
   /**
@@ -159,7 +179,7 @@ export class DeviceParkHttpClient {
 
   private buildUrl(
     path: string,
-    query?: Record<string, string | number | boolean | null | undefined>
+    query?: Record<string, QueryValue>
   ): string {
     const url = new URL(path, this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`);
 
@@ -169,7 +189,15 @@ export class DeviceParkHttpClient {
           continue;
         }
 
-        url.searchParams.set(key, String(value));
+        if (Array.isArray(value)) {
+          for (const item of value) {
+            if (item !== undefined && item !== null) {
+              url.searchParams.append(key, String(item));
+            }
+          }
+        } else {
+          url.searchParams.set(key, String(value));
+        }
       }
     }
 

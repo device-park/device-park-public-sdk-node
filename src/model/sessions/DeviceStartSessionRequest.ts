@@ -1,12 +1,13 @@
+import { DeviceParkConfigError } from "../../sdk/errors/index.js";
+
 export interface DeviceStartSessionRequest {
-  allocationId?: string;
+  allocationId: string;
   companyPoolId?: string;
-  sessionId?: string;
-  videoRecording: boolean;
-  userId?: number;
-  userEmail?: string;
-  companyId?: number;
-  companyName?: string;
+  videoRecording?: boolean;
+  userId: number;
+  userEmail: string;
+  companyId: number;
+  companyName: string;
   customVideoRecordingPath?: string;
   appiumVersion?: string;
 }
@@ -17,7 +18,7 @@ export interface DeviceStartSessionRequest {
  * `videoRecording` defaults to `false`.
  */
 export class DeviceStartSessionRequestBuilder {
-  private readonly request: DeviceStartSessionRequest = {
+  private readonly request: Partial<DeviceStartSessionRequest> = {
     videoRecording: false
   };
 
@@ -28,11 +29,6 @@ export class DeviceStartSessionRequestBuilder {
 
   public companyPoolId(companyPoolId: string): this {
     this.request.companyPoolId = companyPoolId;
-    return this;
-  }
-
-  public sessionId(sessionId: string): this {
-    this.request.sessionId = sessionId;
     return this;
   }
 
@@ -72,6 +68,24 @@ export class DeviceStartSessionRequestBuilder {
   }
 
   public build(): DeviceStartSessionRequest {
-    return { ...this.request };
+    const requiredFields = [
+      "allocationId",
+      "userId",
+      "userEmail",
+      "companyId",
+      "companyName"
+    ] as const;
+
+    for (const field of requiredFields) {
+      if (this.request[field] === undefined || this.request[field] === null) {
+        throw new DeviceParkConfigError(`${field} is required`);
+      }
+    }
+
+    if (!this.request.companyName?.trim()) {
+      throw new DeviceParkConfigError("companyName cannot be blank");
+    }
+
+    return { ...this.request } as DeviceStartSessionRequest;
   }
 }
