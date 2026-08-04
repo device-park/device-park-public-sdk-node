@@ -1,4 +1,5 @@
-export type QueryValue = string | number | boolean | null | undefined;
+export type QueryScalar = string | number | boolean | null | undefined;
+export type QueryValue = QueryScalar | readonly QueryScalar[];
 
 export function buildUrl(baseUrl: string, path: string): string {
   if (!path) {
@@ -24,7 +25,15 @@ export function buildUri(baseUrl: string, path: string, query: Record<string, Qu
       continue;
     }
 
-    url.searchParams.set(key, String(value));
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        if (item !== undefined && item !== null) {
+          url.searchParams.append(key, String(item));
+        }
+      }
+    } else {
+      url.searchParams.set(key, String(value));
+    }
   }
 
   return url.toString();

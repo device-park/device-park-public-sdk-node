@@ -19,6 +19,10 @@ export interface ListPoolsRequest {
   sorting: Sorting;
 }
 
+export interface CreatePoolRequest {
+  name: string;
+}
+
 export interface ApplicationPaginationRequest {
   filters: ApplicationFilterRequest[];
   sorting: Sorting;

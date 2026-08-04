@@ -15,6 +15,7 @@ import type {
   DeviceAllocationRequest,
   DeviceSessionRequest,
   DeviceStartSessionRequest,
+  CreatePoolRequest,
   ListDevicesRequest,
   ListPoolsRequest,
   ScreenRecordPaginationRequest
@@ -93,6 +94,23 @@ export class ListPoolsRequestBuilder extends PaginationRequestBuilder<ListPoolsR
 
   public addFilter(key: PoolFilterRequest["key"], value: unknown, operation: SearchOperation): this {
     return super.pushFilter({ key, value, operation });
+  }
+}
+
+export class CreatePoolRequestBuilder {
+  private readonly request: Partial<CreatePoolRequest> = {};
+
+  public name(name: string): this {
+    this.request.name = name;
+    return this;
+  }
+
+  public build(): CreatePoolRequest {
+    if (!this.request.name?.trim()) {
+      throw new DeviceParkConfigError("name cannot be empty");
+    }
+
+    return { name: this.request.name };
   }
 }
 

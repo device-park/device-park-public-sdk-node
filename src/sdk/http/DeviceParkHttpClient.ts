@@ -62,7 +62,12 @@ export class DeviceParkHttpClient {
     return Buffer.from(await response.arrayBuffer());
   }
 
-  public async post(path: string, body?: unknown, headers?: Record<string, string>): Promise<string> {
+  public async post(
+    path: string,
+    body?: unknown,
+    query?: Record<string, QueryValue>,
+    headers?: Record<string, string>
+  ): Promise<string> {
     const requestHeaders = {
       "content-type": "application/json",
       ...headers
@@ -73,11 +78,25 @@ export class DeviceParkHttpClient {
     if (body !== undefined) {
       options.body = serializeJson(body);
     }
+    if (query) {
+      options.query = query;
+    }
     return this.request("POST", path, options);
   }
 
-  public async delete(path: string, headers?: Record<string, string>): Promise<string> {
-    return this.request("DELETE", path, headers ? { headers } : {});
+  public async delete(
+    path: string,
+    query?: Record<string, QueryValue>,
+    headers?: Record<string, string>
+  ): Promise<string> {
+    const options: RequestOptions = {};
+    if (query) {
+      options.query = query;
+    }
+    if (headers) {
+      options.headers = headers;
+    }
+    return this.request("DELETE", path, options);
   }
 
   public async postStream(
