@@ -7,7 +7,7 @@ The SDK provides typed clients for discovering devices, selecting device pools, 
 ## Capabilities
 
 - List devices and retrieve current device details.
-- List device pools and identify the default pool.
+- List, create and delete device pools; identify the default pool and manage device membership.
 - Reserve an exact device, a device pool or a device matching platform criteria.
 - Optionally remove non-default applications before device allocation.
 - Inspect active and queued allocations.
@@ -119,6 +119,10 @@ try {
   const session = await client.sessions().start(
     new DeviceStartSessionRequestBuilder()
       .allocationId(allocationId)
+      .userId(42)
+      .userEmail("qa@example.com")
+      .companyId(7)
+      .companyName("Example Company")
       .videoRecording(true)
       .build()
   );
@@ -155,6 +159,10 @@ One active allocation can be reused for multiple sessions:
 const firstSession = await client.sessions().start(
   new DeviceStartSessionRequestBuilder()
     .allocationId(allocationId)
+    .userId(42)
+    .userEmail("qa@example.com")
+    .companyId(7)
+    .companyName("Example Company")
     .build()
 );
 
@@ -163,6 +171,10 @@ await client.sessions().stop(firstSession.sessionId!);
 const secondSession = await client.sessions().start(
   new DeviceStartSessionRequestBuilder()
     .allocationId(allocationId)
+    .userId(42)
+    .userEmail("qa@example.com")
+    .companyId(7)
+    .companyName("Example Company")
     .build()
 );
 ```
@@ -174,7 +186,7 @@ Stop the current session before starting the next unless concurrent sessions are
 | Service | Purpose | Main methods |
 |---|---|---|
 | `client.devices()` | Discover and inspect devices | `list`, `get` |
-| `client.pools()` | Discover managed device pools | `list`, `listByDefaultPool` |
+| `client.pools()` | Discover and manage device pools | `list`, `listByDefaultPool`, `create`, `delete`, `addDevices`, `removeDevices` |
 | `client.allocations()` | Reserve and release devices | `create`, `list`, `delete` |
 | `client.sessions()` | Manage test sessions and artifacts | `start`, `list`, `stop`, `logs`, `screenRecords` |
 | `client.applications()` | Manage APK and IPA artifacts | `upload`, `list`, `delete` |
@@ -191,6 +203,20 @@ const defaultPools = await client.pools().listByDefaultPool(
 );
 
 console.log(defaultPools.data[0]?.isDefault);
+```
+
+Create a pool and manage its devices by serial number:
+
+```typescript
+import { CreatePoolRequestBuilder } from "@device-park/public-sdk";
+
+const pool = await client.pools().create(
+  new CreatePoolRequestBuilder().name("Android Regression").build()
+);
+
+await client.pools().addDevices(pool.id!, ["SERIAL-1", "SERIAL-2"]);
+await client.pools().removeDevices(pool.id!, ["SERIAL-1"]);
+await client.pools().delete(pool.id!);
 ```
 
 Allocation requests keep installed applications by default. Remove only non-default applications when the workflow requires a clean device:
