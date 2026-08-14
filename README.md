@@ -6,7 +6,7 @@ The SDK provides typed clients for discovering devices, selecting device pools, 
 
 ## Capabilities
 
-- List devices and retrieve current device details.
+- List devices, retrieve device details and inspect installed applications.
 - List, create and delete device pools; identify the default pool and manage device membership.
 - Reserve an exact device, a device pool or a device matching platform criteria.
 - Optionally remove non-default applications before device allocation.
@@ -185,13 +185,35 @@ Stop the current session before starting the next unless concurrent sessions are
 
 | Service | Purpose | Main methods |
 |---|---|---|
-| `client.devices()` | Discover and inspect devices | `list`, `get` |
+| `client.devices()` | Discover devices and installed applications | `list`, `get`, `apps` |
 | `client.pools()` | Discover and manage device pools | `list`, `listByDefaultPool`, `create`, `delete`, `addDevices`, `removeDevices` |
 | `client.allocations()` | Reserve and release devices | `create`, `list`, `delete` |
 | `client.sessions()` | Manage test sessions and artifacts | `start`, `list`, `stop`, `logs`, `screenRecords` |
 | `client.applications()` | Manage APK and IPA artifacts | `upload`, `list`, `delete` |
 
 List methods return `PageDto<T>` with `page`, `size`, `totalPages`, `totalElements` and `data`.
+
+List default applications installed on a device:
+
+```typescript
+import {
+  DeviceAppFilter,
+  type DeviceAppFilterRequest,
+  ListDeviceAppsRequestBuilder,
+  SearchOperation
+} from "@device-park/public-sdk";
+
+const filterRequest: DeviceAppFilterRequest = {
+  key: DeviceAppFilter.IS_DEFAULT,
+  value: true,
+  operation: SearchOperation.EQUAL
+};
+
+const apps = await client.devices().apps(
+  "00008140-000C58300CBB801C",
+  new ListDeviceAppsRequestBuilder().filters([filterRequest]).build()
+);
+```
 
 List the default pool while retaining pagination and sorting options:
 

@@ -3,6 +3,7 @@ import type {
   AllocationFilter,
   ApplicationFilter,
   DeviceFilter,
+  DeviceAppFilter,
   PoolFilter,
   ScreenRecordFilter,
   SessionFilter
@@ -15,6 +16,9 @@ export interface FilterRequest<TKey extends string = string> {
 }
 
 export type DeviceFilterRequest = FilterRequest<(typeof DeviceFilter)[keyof typeof DeviceFilter]>;
+export type DeviceAppFilterRequest = FilterRequest<
+  (typeof DeviceAppFilter)[keyof typeof DeviceAppFilter]
+>;
 export type PoolFilterRequest = FilterRequest<(typeof PoolFilter)[keyof typeof PoolFilter]>;
 export type ApplicationFilterRequest = FilterRequest<
   (typeof ApplicationFilter)[keyof typeof ApplicationFilter]

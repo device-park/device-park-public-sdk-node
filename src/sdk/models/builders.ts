@@ -5,6 +5,7 @@ import type {
   AllocationFilterRequest,
   ApplicationFilterRequest,
   DeviceFilterRequest,
+  DeviceAppFilterRequest,
   DeviceSessionFilterRequest,
   PoolFilterRequest,
   ScreenRecordFilterRequest
@@ -17,6 +18,7 @@ import type {
   DeviceStartSessionRequest,
   CreatePoolRequest,
   ListDevicesRequest,
+  ListDeviceAppsRequest,
   ListPoolsRequest,
   ScreenRecordPaginationRequest
 } from "./requests.js";
@@ -83,6 +85,23 @@ export class ListDevicesRequestBuilder extends PaginationRequestBuilder<
   }
 
   public addFilter(key: DeviceFilterRequest["key"], value: unknown, operation: SearchOperation): this {
+    return super.pushFilter({ key, value, operation });
+  }
+}
+
+export class ListDeviceAppsRequestBuilder extends PaginationRequestBuilder<
+  ListDeviceAppsRequest,
+  DeviceAppFilterRequest
+> {
+  public constructor() {
+    super(() => ({ filters: [], sorting: createDefaultSorting() }));
+  }
+
+  public addFilter(
+    key: DeviceAppFilterRequest["key"],
+    value: unknown,
+    operation: SearchOperation
+  ): this {
     return super.pushFilter({ key, value, operation });
   }
 }

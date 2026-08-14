@@ -18,18 +18,21 @@ export {
 } from "./model/allocation/RemoveAppSelection.js";
 export { ApplicationFilter } from "./model/applications/ApplicationFilter.js";
 export { DeviceFilter } from "./model/devices/DeviceFilter.js";
+export { DeviceAppFilter } from "./model/devices/apps/DeviceAppFilter.js";
 export { PoolFilter } from "./model/pools/PoolFilter.js";
 export { ScreenRecordFilter } from "./model/sessions/screenRecord/ScreenRecordFilter.js";
 export { SessionFilter } from "./model/sessions/SessionFilter.js";
 export type { Allocation } from "./model/allocation/Allocation.js";
 export type { Application } from "./model/applications/Application.js";
 export type { Device } from "./model/devices/Device.js";
+export type { DeviceApp } from "./model/devices/apps/DeviceApp.js";
 export type { Pool } from "./model/pools/Pool.js";
 export type { ScreenRecord } from "./model/sessions/screenRecord/ScreenRecord.js";
 export type { Session } from "./model/sessions/Session.js";
 export type { AllocationFilterRequest } from "./model/allocation/AllocationFilterRequest.js";
 export type { ApplicationFilterRequest } from "./model/applications/ApplicationFilterRequest.js";
 export type { DeviceFilterRequest } from "./model/devices/DeviceFilterRequest.js";
+export type { DeviceAppFilterRequest } from "./model/devices/apps/DeviceAppFilterRequest.js";
 export type { DeviceSessionFilterRequest } from "./model/sessions/DeviceSessionFilterRequest.js";
 export type { PoolFilterRequest } from "./model/pools/PoolFilterRequest.js";
 export type { ScreenRecordFilterRequest } from "./model/sessions/screenRecord/ScreenRecordFilterRequest.js";
@@ -43,6 +46,7 @@ export { DeviceAllocationRequestBuilder } from "./model/allocation/DeviceAllocat
 export { DeviceSessionRequestBuilder } from "./model/sessions/DeviceSessionRequest.js";
 export { DeviceStartSessionRequestBuilder } from "./model/sessions/DeviceStartSessionRequest.js";
 export { ListDevicesRequestBuilder } from "./model/devices/ListDevicesRequest.js";
+export { ListDeviceAppsRequestBuilder } from "./model/devices/apps/ListDeviceAppsRequest.js";
 export { ListPoolsRequestBuilder } from "./model/pools/ListPoolsRequest.js";
 export { CreatePoolRequestBuilder } from "./model/pools/CreatePoolRequest.js";
 export {
@@ -58,6 +62,7 @@ export type {
   DeviceStartSessionRequest
 } from "./model/sessions/DeviceStartSessionRequest.js";
 export type { ListDevicesRequest } from "./model/devices/ListDevicesRequest.js";
+export type { ListDeviceAppsRequest } from "./model/devices/apps/ListDeviceAppsRequest.js";
 export type { ListPoolsRequest } from "./model/pools/ListPoolsRequest.js";
 export type { CreatePoolRequest } from "./model/pools/CreatePoolRequest.js";
 export type {
