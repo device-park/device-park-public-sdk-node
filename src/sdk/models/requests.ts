@@ -3,6 +3,7 @@ import type {
   AllocationFilterRequest,
   ApplicationFilterRequest,
   DeviceFilterRequest,
+  DeviceAppFilterRequest,
   DeviceSessionFilterRequest,
   PoolFilterRequest,
   ScreenRecordFilterRequest
@@ -11,6 +12,11 @@ import type { RemoveAppSelectionType } from "../../model/allocation/RemoveAppSel
 
 export interface ListDevicesRequest {
   filters: DeviceFilterRequest[];
+  sorting: Sorting;
+}
+
+export interface ListDeviceAppsRequest {
+  filters: DeviceAppFilterRequest[];
   sorting: Sorting;
 }
 

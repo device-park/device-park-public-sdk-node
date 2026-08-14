@@ -12,6 +12,14 @@ export interface Device {
   isPublic: boolean | null;
 }
 
+export interface DeviceApp {
+  id: number | null;
+  bundleIdentifier: string | null;
+  installedAt: string | null;
+  updatedAt: string | null;
+  isDefault: boolean | null;
+}
+
 export interface Pool {
   id: string | null;
   name: string | null;
