@@ -10,6 +10,12 @@ export const DeviceFilter = {
   STATE: "deviceStates.state"
 } as const;
 
+export const DeviceAppFilter = {
+  BUNDLE_IDENTIFIER: "BUNDLE_IDENTIFIER",
+  IS_DEFAULT: "IS_DEFAULT",
+  FILE_KEY: "FILE_KEY"
+} as const;
+
 export const PoolFilter = {
   NAME: "NAME",
   IS_DEFAULT: "IS_DEFAULT"
