@@ -7,6 +7,8 @@ import {
 } from "../model/sessions/DeviceSessionRequest.js";
 import type { DeviceStartSessionRequest } from "../model/sessions/DeviceStartSessionRequest.js";
 import type { Session } from "../model/sessions/Session.js";
+import type { StreamUrl } from "../model/sessions/StreamUrl.js";
+import { StreamUrls } from "./StreamUrls.js";
 import type { ScreenRecord } from "../model/sessions/screenRecord/ScreenRecord.js";
 import {
   ScreenRecordPaginationRequestBuilder,
@@ -23,6 +25,7 @@ const SCREEN_RECORDS_PATH = "/storage/api/v1/public/sessions";
  *
  * Base paths:
  * - `/session/api/v2/public/sessions`
+ * - `/session/api/v2/public/sessions/{sessionId}/stream-url`
  * - `/storage/api/v1/public/sessions/{sessionId}/screen-records`
  */
 export class SessionApi {
@@ -55,6 +58,22 @@ export class SessionApi {
 
     const response = await this.deviceParkHttpClient.post(SESSION_PATH, request);
     return JsonMapper.fromJson<Session>(response);
+  }
+
+  /**
+   * Returns a WebSocket URL for watching the device screen of the given session.
+   *
+   * The session-api response contains the stream address without a token. This method appends the
+   * SDK's current access token as the `token` query parameter. The session must belong to the
+   * authenticated client. The returned URL carries a credential and must not be logged.
+   */
+  public async streamUrl(sessionId: string): Promise<string> {
+    this.assertSessionId(sessionId);
+    const response = await this.deviceParkHttpClient.get(
+      `${SESSION_PATH}/${encodeURIComponent(sessionId)}/stream-url`
+    );
+    const streamUrl = JsonMapper.fromJson<StreamUrl>(response);
+    return StreamUrls.withAccessToken(streamUrl.url, await this.deviceParkHttpClient.currentAccessToken());
   }
 
   /**

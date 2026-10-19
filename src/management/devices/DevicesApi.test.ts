@@ -3,6 +3,9 @@ import test from "node:test";
 import { Credentials } from "../../authentication/credentials/Credentials.js";
 import { DeviceParkApiClient } from "../../DeviceParkApiClient.js";
 import { SearchOperation } from "../../model/common/SearchOperation.js";
+import { DeviceFilter } from "../../model/devices/DeviceFilter.js";
+import { ListDevicesRequestBuilder } from "../../model/devices/ListDevicesRequest.js";
+import { SessionFilter } from "../../model/sessions/SessionFilter.js";
 import { DeviceAppFilter } from "../../model/devices/apps/DeviceAppFilter.js";
 import type { DeviceAppFilterRequest } from "../../model/devices/apps/DeviceAppFilterRequest.js";
 import { ListDeviceAppsRequestBuilder } from "../../model/devices/apps/ListDeviceAppsRequest.js";
@@ -142,4 +145,102 @@ test("DevicesApi surfaces a 404 when the device is not assigned to the client", 
   } finally {
     await client.close();
   }
+});
+
+function clientWith(handler: (url: URL) => Response) {
+  const fetchImplementation: typeof fetch = async (input) => {
+    if (String(input).endsWith("/uaa/oauth2/token")) {
+      return Response.json({ access_token: "token", token_type: "Bearer", expires_in: 3600 });
+    }
+    return handler(new URL(String(input)));
+  };
+
+  return DeviceParkApiClient.builder()
+    .url("https://devicepark.testinium.io")
+    .credentials(Credentials.create("client-id", "client-secret"))
+    .fetchImplementation(fetchImplementation)
+    .build();
+}
+
+const emptyPage = { size: 20, page: 0, totalPages: 0, totalElements: 0, data: [] };
+
+test("DevicesApi lists devices through the v2 endpoint", async () => {
+  const urls: URL[] = [];
+  const client = clientWith((url) => {
+    urls.push(url);
+    return Response.json(emptyPage);
+  });
+
+  try {
+    await client.devices().list();
+  } finally {
+    await client.close();
+  }
+
+  assert.equal(urls[0]?.pathname, "/management/api/v2/public/devices");
+});
+
+test("DevicesApi keeps the v1 endpoint for a single device", async () => {
+  const urls: URL[] = [];
+  const client = clientWith((url) => {
+    urls.push(url);
+    return Response.json({ serial: "abc" });
+  });
+
+  try {
+    await client.devices().get("abc");
+    await assert.rejects(() => client.devices().get(" "));
+  } finally {
+    await client.close();
+  }
+
+  assert.equal(urls[0]?.pathname, "/management/api/v1/public/devices/abc");
+});
+
+test("DevicesApi.listByDefaultPool filters by the default pool and replaces a caller pool filter", async () => {
+  const urls: URL[] = [];
+  const client = clientWith((url) => {
+    urls.push(url);
+    if (url.pathname.endsWith("/pools")) {
+      return Response.json({ ...emptyPage, data: [{ id: "pool-1", name: "Default", isDefault: true }] });
+    }
+    return Response.json(emptyPage);
+  });
+
+  try {
+    await client.devices().listByDefaultPool(
+      new ListDevicesRequestBuilder()
+        .addFilter(DeviceFilter.POOL_ID, "other", "EQUAL")
+        .addFilter(DeviceFilter.PLATFORM, "ANDROID", "EQUAL")
+        .build()
+    );
+  } finally {
+    await client.close();
+  }
+
+  const deviceUrl = urls.find((url) => url.pathname === "/management/api/v2/public/devices");
+  assert.ok(deviceUrl);
+  assert.equal(deviceUrl.searchParams.get("filters[0].key"), DeviceFilter.POOL_ID);
+  assert.equal(deviceUrl.searchParams.get("filters[0].value"), "pool-1");
+  assert.equal(deviceUrl.searchParams.get("filters[1].key"), DeviceFilter.PLATFORM);
+  assert.equal(deviceUrl.searchParams.get("filters[2].key"), null);
+});
+
+test("DevicesApi.listByDefaultPool fails when no default pool exists", async () => {
+  const client = clientWith(() => Response.json(emptyPage));
+
+  try {
+    await assert.rejects(() => client.devices().listByDefaultPool(), /Default pool not found/);
+  } finally {
+    await client.close();
+  }
+});
+
+test("filter constants follow the Java SDK", () => {
+  assert.equal(DeviceFilter.PLATFORM_VERSION, "platformVersion");
+  assert.equal(DeviceFilter.OS_VERSION, "platformVersion");
+  assert.equal(SessionFilter.USER_EMAIL, "userEmail");
+  assert.equal(SessionFilter.USER_ID, "userId");
+  assert.equal(SessionFilter.COMPANY_ID, "companyId");
+  assert.equal(SessionFilter.COMPANY_NAME, "companyName");
 });

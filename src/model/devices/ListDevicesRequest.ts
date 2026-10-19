@@ -13,7 +13,7 @@ export interface ListDevicesRequest {
  * Builder for the devices list request.
  *
  * The request carries filter, pagination and sorting data for
- * `GET /management/api/v1/public/devices`.
+ * `GET /management/api/v2/public/devices`.
  */
 export class ListDevicesRequestBuilder {
   private readonly request: ListDevicesRequest = {

@@ -149,13 +149,47 @@ export class DeviceParkHttpClient {
     return response.text();
   }
 
+  /**
+   * Returns the current access token value, fetching or renewing it when needed.
+   *
+   * Used to build token-carrying URLs such as the screen-stream WebSocket address.
+   * The value must not be logged.
+   */
+  public async currentAccessToken(): Promise<string> {
+    return (await this.getValidAccessToken()).value;
+  }
+
   private async execute(method: string, path: string, options: RequestOptions): Promise<Response> {
+    // A request body that is a stream is consumed by the first attempt, so only those requests are not retried.
+    const retryable = !(options.body instanceof ReadableStream);
+    const response = await this.send(method, path, options);
+
+    if (response.status === 401 && retryable) {
+      // The cached token may have been revoked or expired early: drop it and retry once with a fresh one.
+      await response.text().catch(() => undefined);
+      this.accessToken = null;
+      const retried = await this.send(method, path, options);
+      return this.ensureOk(retried);
+    }
+
+    return this.ensureOk(response);
+  }
+
+  private async ensureOk(response: Response): Promise<Response> {
+    if (response.ok) {
+      return response;
+    }
+
+    throw new DeviceParkHttpError(response.status, await response.text());
+  }
+
+  private async send(method: string, path: string, options: RequestOptions): Promise<Response> {
     const accessToken = await this.getValidAccessToken();
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
 
     try {
-      const response = await this.fetchImplementation(this.buildUrl(path, options.query), {
+      return await this.fetchImplementation(this.buildUrl(path, options.query), {
         method,
         body: options.body,
         headers: {
@@ -166,12 +200,6 @@ export class DeviceParkHttpClient {
         signal: controller.signal,
         duplex: options.body ? "half" : undefined
       } as RequestInit);
-
-      if (response.ok) {
-        return response;
-      }
-
-      throw new DeviceParkHttpError(response.status, await response.text());
     } finally {
       clearTimeout(timeout);
     }
