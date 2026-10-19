@@ -29,6 +29,12 @@ export type { DeviceApp } from "./model/devices/apps/DeviceApp.js";
 export type { Pool } from "./model/pools/Pool.js";
 export type { ScreenRecord } from "./model/sessions/screenRecord/ScreenRecord.js";
 export type { Session } from "./model/sessions/Session.js";
+export type { StreamUrl } from "./model/sessions/StreamUrl.js";
+export {
+  VideoRecordingScope,
+  type VideoRecordingScopeType
+} from "./model/sessions/VideoRecordingScope.js";
+export { StreamUrls } from "./sessions/StreamUrls.js";
 export type { AllocationFilterRequest } from "./model/allocation/AllocationFilterRequest.js";
 export type { ApplicationFilterRequest } from "./model/applications/ApplicationFilterRequest.js";
 export type { DeviceFilterRequest } from "./model/devices/DeviceFilterRequest.js";

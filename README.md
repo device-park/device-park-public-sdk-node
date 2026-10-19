@@ -13,6 +13,8 @@ The SDK provides typed clients for discovering devices, selecting device pools, 
 - Inspect active and queued allocations.
 - Start multiple sequential sessions from the same active allocation.
 - Stop sessions and collect Appium logs or screen recordings.
+- Get a WebSocket URL to watch the device screen of an active session.
+- Retry a request once with a fresh access token when the API answers `401`.
 - Upload, list and delete APK or IPA artifacts.
 - Enable image injection for supported application-upload workflows.
 - Authenticate with OAuth2 client credentials and renew access tokens automatically.
@@ -185,10 +187,10 @@ Stop the current session before starting the next unless concurrent sessions are
 
 | Service | Purpose | Main methods |
 |---|---|---|
-| `client.devices()` | Discover devices and installed applications | `list`, `get`, `apps` |
+| `client.devices()` | Discover devices and installed applications | `list`, `listByDefaultPool`, `get`, `apps` |
 | `client.pools()` | Discover and manage device pools | `list`, `listByDefaultPool`, `create`, `delete`, `addDevices`, `removeDevices` |
 | `client.allocations()` | Reserve and release devices | `create`, `list`, `delete` |
-| `client.sessions()` | Manage test sessions and artifacts | `start`, `list`, `stop`, `logs`, `screenRecords` |
+| `client.sessions()` | Manage test sessions and artifacts | `start`, `list`, `streamUrl`, `stop`, `logs`, `screenRecords` |
 | `client.applications()` | Manage APK and IPA artifacts | `upload`, `list`, `delete` |
 
 List methods return `PageDto<T>` with `page`, `size`, `totalPages`, `totalElements` and `data`.

@@ -53,7 +53,7 @@ export class AllocationApi {
    * Deletes an existing allocation by id.
    */
   public async delete(allocationId: string): Promise<void> {
-    if (!allocationId.trim()) {
+    if (!allocationId?.trim()) {
       throw new DeviceParkConfigError("allocationId cannot be empty");
     }
 

@@ -47,11 +47,11 @@ export class ApplicationApi {
     version: string,
     imageInjection = false
   ): Promise<Application> {
-    if (!fileName.trim()) {
+    if (!fileName?.trim()) {
       throw new DeviceParkConfigError("fileName cannot be empty");
     }
 
-    if (!version.trim()) {
+    if (!version?.trim()) {
       throw new DeviceParkConfigError("version cannot be empty");
     }
 
@@ -72,7 +72,7 @@ export class ApplicationApi {
    * Deletes an application and its revisions by file key.
    */
   public async delete(fileKey: string): Promise<void> {
-    if (!fileKey.trim()) {
+    if (!fileKey?.trim()) {
       throw new DeviceParkConfigError("fileKey cannot be empty");
     }
 
