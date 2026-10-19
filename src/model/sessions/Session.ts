@@ -1,3 +1,5 @@
+import type { VideoRecordingScopeType } from "./VideoRecordingScope.js";
+
 export interface Session {
   id: number | null;
   state: string | null;
@@ -18,6 +20,7 @@ export interface Session {
   devicePlatform: string | null;
   deviceVersion: string | null;
   videoRecording: boolean | null;
+  videoRecordingScope?: VideoRecordingScopeType | null;
   videoRecordUrl: string | null;
   appiumVersion: string | null;
   createdAt: string | null;

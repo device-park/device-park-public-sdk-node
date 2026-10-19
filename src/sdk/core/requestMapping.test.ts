@@ -19,7 +19,7 @@ test("createPaginationQuery maps sorting and filters", () => {
     "sorting.size": 50,
     "sorting.sortBy": "SERIAL",
     "sorting.direction": "ASC",
-    "filters[0].key": "platform",
+    "filters[0].key": "PLATFORM",
     "filters[0].value": "Android",
     "filters[0].operation": "EQUAL"
   });

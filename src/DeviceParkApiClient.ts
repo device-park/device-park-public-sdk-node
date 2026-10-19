@@ -40,7 +40,7 @@ export class DeviceParkApiClient {
    */
   public devices(): DevicesApi {
     if (!this.devicesApi) {
-      this.devicesApi = new DevicesApi(this.httpClient);
+      this.devicesApi = new DevicesApi(this.httpClient, this.pools());
     }
 
     return this.devicesApi;

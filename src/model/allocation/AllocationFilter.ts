@@ -1,3 +1,3 @@
 export const AllocationFilter = {
-  ALLOCATION: "allocationId"
+  ALLOCATION: "ALLOCATION"
 } as const;

@@ -1,9 +1,12 @@
 import { DeviceParkConfigError } from "../../sdk/errors/index.js";
+import type { VideoRecordingScopeType } from "./VideoRecordingScope.js";
 
 export interface DeviceStartSessionRequest {
   allocationId: string;
   companyPoolId?: string;
   videoRecording?: boolean;
+  /** Who manages screen recording; the API defaults to `FULL_SESSION` when omitted. */
+  videoRecordingScope?: VideoRecordingScopeType;
   userId: number;
   userEmail: string;
   companyId: number;
@@ -34,6 +37,11 @@ export class DeviceStartSessionRequestBuilder {
 
   public videoRecording(videoRecording: boolean): this {
     this.request.videoRecording = videoRecording;
+    return this;
+  }
+
+  public videoRecordingScope(videoRecordingScope: VideoRecordingScopeType): this {
+    this.request.videoRecordingScope = videoRecordingScope;
     return this;
   }
 

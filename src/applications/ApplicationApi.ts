@@ -11,6 +11,13 @@ import { createPaginationQuery } from "../sdk/core/requestMapping.js";
 
 const APPLICATION_PATH = "/storage/api/v1/public/applications";
 
+/** The storage API serializes the size as `size_in_bytes`; expose it as `sizeInBytes` like the Java SDK model. */
+function normalizeApplication(application: Application): Application {
+  const raw = application as Application & { size_in_bytes?: number | null };
+  const { size_in_bytes: sizeInBytes, ...rest } = raw;
+  return { ...rest, sizeInBytes: rest.sizeInBytes ?? sizeInBytes ?? null };
+}
+
 /**
  * Application API service.
  *
@@ -33,7 +40,8 @@ export class ApplicationApi {
       createPaginationQuery(nextRequest)
     );
 
-    return JsonMapper.fromJson<PageDto<Application>>(response);
+    const page = JsonMapper.fromJson<PageDto<Application>>(response);
+    return { ...page, data: page.data.map(normalizeApplication) };
   }
 
   /**
@@ -47,11 +55,11 @@ export class ApplicationApi {
     version: string,
     imageInjection = false
   ): Promise<Application> {
-    if (!fileName.trim()) {
+    if (!fileName?.trim()) {
       throw new DeviceParkConfigError("fileName cannot be empty");
     }
 
-    if (!version.trim()) {
+    if (!version?.trim()) {
       throw new DeviceParkConfigError("version cannot be empty");
     }
 
@@ -65,14 +73,14 @@ export class ApplicationApi {
       "image-injection": String(imageInjection)
     });
 
-    return JsonMapper.fromJson<Application>(response);
+    return normalizeApplication(JsonMapper.fromJson<Application>(response));
   }
 
   /**
    * Deletes an application and its revisions by file key.
    */
   public async delete(fileKey: string): Promise<void> {
-    if (!fileKey.trim()) {
+    if (!fileKey?.trim()) {
       throw new DeviceParkConfigError("fileKey cannot be empty");
     }
 
