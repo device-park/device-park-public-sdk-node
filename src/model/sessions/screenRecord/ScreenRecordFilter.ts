@@ -1,3 +1,3 @@
 export const ScreenRecordFilter = {
-  CREATED_AT: "createdAt"
+  CREATED_AT: "CREATED_AT"
 } as const;

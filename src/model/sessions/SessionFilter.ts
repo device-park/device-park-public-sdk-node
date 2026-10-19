@@ -1,10 +1,10 @@
 export const SessionFilter = {
-  ALLOCATION: "allocationId",
-  SESSION: "sessionId",
-  SERIAL: "deviceSerial",
-  STATE: "state",
-  USER_EMAIL: "userEmail",
-  USER_ID: "userId",
-  COMPANY_ID: "companyId",
-  COMPANY_NAME: "companyName"
+  ALLOCATION: "ALLOCATION",
+  SESSION: "SESSION",
+  SERIAL: "SERIAL",
+  STATE: "STATE",
+  USER_EMAIL: "USER_EMAIL",
+  USER_ID: "USER_ID",
+  COMPANY_ID: "COMPANY_ID",
+  COMPANY_NAME: "COMPANY_NAME"
 } as const;

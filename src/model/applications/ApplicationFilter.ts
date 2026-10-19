@@ -1,6 +1,6 @@
 export const ApplicationFilter = {
-  FILE_KEY: "fileKey",
-  FILE_PATH: "filePath",
-  VERSION: "version",
-  REVISION: "revision"
+  FILE_KEY: "FILE_KEY",
+  FILE_PATH: "FILE_PATH",
+  VERSION: "VERSION",
+  REVISION: "REVISION"
 } as const;

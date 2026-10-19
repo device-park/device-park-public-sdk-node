@@ -1,15 +1,19 @@
+/**
+ * Filter keys of the device list endpoint. The server deserializes `key` into its `DeviceFilter`
+ * enum, so the value sent must be the enum NAME (as the Java SDK sends), not the database column.
+ */
 export const DeviceFilter = {
-  POOL_ID: "devicePools.id",
-  SERIAL_NUMBER: "serial",
-  MARKETING_NAME: "marketName",
-  MANUFACTURER: "manufacturer",
-  MODEL_NAME: "model",
-  PLATFORM: "platform",
-  PLATFORM_VERSION: "platformVersion",
+  POOL_ID: "POOL_ID",
+  SERIAL_NUMBER: "SERIAL_NUMBER",
+  MARKETING_NAME: "MARKETING_NAME",
+  MANUFACTURER: "MANUFACTURER",
+  MODEL_NAME: "MODEL_NAME",
+  PLATFORM: "PLATFORM",
+  PLATFORM_VERSION: "PLATFORM_VERSION",
   /** @deprecated `osVersion` is not a filterable field; use {@link DeviceFilter.PLATFORM_VERSION}. */
-  OS_VERSION: "platformVersion",
-  TAGS: "tags.name",
-  STATE: "deviceStates.state"
+  OS_VERSION: "PLATFORM_VERSION",
+  TAGS: "TAGS",
+  STATE: "STATE"
 } as const;
 
 export const DeviceAppFilter = {
@@ -24,27 +28,27 @@ export const PoolFilter = {
 } as const;
 
 export const ApplicationFilter = {
-  FILE_KEY: "fileKey",
-  FILE_PATH: "filePath",
-  VERSION: "version",
-  REVISION: "revision"
+  FILE_KEY: "FILE_KEY",
+  FILE_PATH: "FILE_PATH",
+  VERSION: "VERSION",
+  REVISION: "REVISION"
 } as const;
 
 export const AllocationFilter = {
-  ALLOCATION: "allocationId"
+  ALLOCATION: "ALLOCATION"
 } as const;
 
 export const SessionFilter = {
-  ALLOCATION: "allocationId",
-  SESSION: "sessionId",
-  SERIAL: "deviceSerial",
-  STATE: "state",
-  USER_EMAIL: "userEmail",
-  USER_ID: "userId",
-  COMPANY_ID: "companyId",
-  COMPANY_NAME: "companyName"
+  ALLOCATION: "ALLOCATION",
+  SESSION: "SESSION",
+  SERIAL: "SERIAL",
+  STATE: "STATE",
+  USER_EMAIL: "USER_EMAIL",
+  USER_ID: "USER_ID",
+  COMPANY_ID: "COMPANY_ID",
+  COMPANY_NAME: "COMPANY_NAME"
 } as const;
 
 export const ScreenRecordFilter = {
-  CREATED_AT: "createdAt"
+  CREATED_AT: "CREATED_AT"
 } as const;
