@@ -237,10 +237,14 @@ test("DevicesApi.listByDefaultPool fails when no default pool exists", async () 
 });
 
 test("filter constants follow the Java SDK", () => {
-  assert.equal(DeviceFilter.PLATFORM_VERSION, "platformVersion");
-  assert.equal(DeviceFilter.OS_VERSION, "platformVersion");
-  assert.equal(SessionFilter.USER_EMAIL, "userEmail");
-  assert.equal(SessionFilter.USER_ID, "userId");
-  assert.equal(SessionFilter.COMPANY_ID, "companyId");
-  assert.equal(SessionFilter.COMPANY_NAME, "companyName");
+  // The server expects the enum name of its DeviceFilter, not the database column.
+  assert.equal(DeviceFilter.PLATFORM_VERSION, "PLATFORM_VERSION");
+  assert.equal(DeviceFilter.OS_VERSION, "PLATFORM_VERSION");
+  assert.equal(DeviceFilter.SERIAL_NUMBER, "SERIAL_NUMBER");
+  assert.equal(DeviceFilter.STATE, "STATE");
+  assert.equal(DeviceFilter.POOL_ID, "POOL_ID");
+  assert.equal(SessionFilter.USER_EMAIL, "USER_EMAIL");
+  assert.equal(SessionFilter.USER_ID, "USER_ID");
+  assert.equal(SessionFilter.COMPANY_ID, "COMPANY_ID");
+  assert.equal(SessionFilter.COMPANY_NAME, "COMPANY_NAME");
 });

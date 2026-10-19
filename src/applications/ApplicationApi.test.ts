@@ -35,3 +35,24 @@ test("ApplicationApi sends the image injection preference", async () => {
   assert.equal(uploadHeaders[0]?.["image-injection"], "false");
   assert.equal(uploadHeaders[1]?.["image-injection"], "true");
 });
+
+test("maps the server's size_in_bytes to sizeInBytes", async () => {
+  const body = { size: 1, page: 0, totalPages: 1, totalElements: 1, data: [{ fileKey: "k", version: "1", size_in_bytes: 123 }] };
+  const fetchImplementation: typeof fetch = async (input) =>
+    String(input).endsWith("/uaa/oauth2/token")
+      ? Response.json({ access_token: "token", token_type: "Bearer", expires_in: 3600 })
+      : Response.json(body);
+  const client = DeviceParkApiClient.builder()
+    .url("https://devicepark.testinium.io")
+    .credentials(Credentials.create("client-id", "client-secret"))
+    .fetchImplementation(fetchImplementation)
+    .build();
+
+  try {
+    const page = await client.applications().list();
+    assert.equal(page.data[0]?.sizeInBytes, 123);
+    assert.equal("size_in_bytes" in (page.data[0] ?? {}), false);
+  } finally {
+    await client.close();
+  }
+});
