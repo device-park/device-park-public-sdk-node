@@ -3,7 +3,7 @@ name: Publish Dev Release to NPM
 on:
   push:
     branches:
-      - dev-package-push-npmjs
+      - dev
   workflow_dispatch:
 
 permissions:
