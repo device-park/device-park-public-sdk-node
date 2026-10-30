@@ -1,0 +1,54 @@
+name: Publish Dev Release to NPM
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # NPM Provenance için gerekli
+
+jobs:
+  publish-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Generate Dev Version
+        id: get_dev_version
+        run: |
+          
+          BASE_VERSION=$(node -p "require('./package.json').version.split('-')[0]")
+          TIMESTAMP=$(date +'%Y%m%d%H%M')
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          
+          
+          DEV_VERSION="${BASE_VERSION}-dev.${TIMESTAMP}.${COMMIT_HASH}"
+          
+          echo "DEV_VERSION=$DEV_VERSION" >> $GITHUB_ENV
+          echo "Generated Dev Version: $DEV_VERSION"
+
+      - name: Update package.json Version Locally
+        run: |
+          # Git tag'i oluşturmadan ve commit atmadan sadece bu runner ortamındaki package.json'ı güncelle
+          npm version ${{ env.DEV_VERSION }} --no-git-tag-version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish Dev Package to NPM
+        run: npm publish --tag dev --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
