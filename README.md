@@ -190,7 +190,7 @@ Stop the current session before starting the next unless concurrent sessions are
 | `client.devices()` | Discover devices and installed applications | `list`, `listByDefaultPool`, `get`, `apps` |
 | `client.pools()` | Discover and manage device pools | `list`, `listByDefaultPool`, `create`, `delete`, `addDevices`, `removeDevices` |
 | `client.allocations()` | Reserve and release devices | `create`, `list`, `delete` |
-| `client.sessions()` | Manage test sessions and artifacts | `start`, `list`, `streamUrl`, `stop`, `logs`, `screenRecords` |
+| `client.sessions()` | Manage test sessions and artifacts | `start`, `list`, `streamUrl`, `streamTicketUrl`, `stop`, `logs`, `screenRecords` |
 | `client.applications()` | Manage APK and IPA artifacts | `upload`, `list`, `delete` |
 
 List methods return `PageDto<T>` with `page`, `size`, `totalPages`, `totalElements` and `data`.
