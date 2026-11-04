@@ -26,6 +26,7 @@ const SCREEN_RECORDS_PATH = "/storage/api/v1/public/sessions";
  * Base paths:
  * - `/session/api/v2/public/sessions`
  * - `/session/api/v2/public/sessions/{sessionId}/stream-url`
+ * - `/session/api/v2/public/sessions/{sessionId}/stream-ticket`
  * - `/storage/api/v1/public/sessions/{sessionId}/screen-records`
  */
 export class SessionApi {
@@ -74,6 +75,27 @@ export class SessionApi {
     );
     const streamUrl = JsonMapper.fromJson<StreamUrl>(response);
     return StreamUrls.withAccessToken(streamUrl.url, await this.deviceParkHttpClient.currentAccessToken());
+  }
+
+  /**
+   * Returns a one-time WebSocket URL for watching the device screen of the given session.
+   *
+   * The URL contains a single-use ticket and does not include an access token. Each call creates a
+   * new ticket. Do not reuse a returned URL, including after a failed connection attempt. The
+   * returned URL must not be logged. `streamUrl` stays available and still appends the access
+   * token; new integrations should use this method. The session must belong to the authenticated
+   * client and be active.
+   */
+  public async streamTicketUrl(sessionId: string): Promise<string> {
+    this.assertSessionId(sessionId);
+    const response = await this.deviceParkHttpClient.post(
+      `${SESSION_PATH}/${encodeURIComponent(sessionId)}/stream-ticket`
+    );
+    const streamUrl = JsonMapper.fromJson<StreamUrl>(response);
+    if (!streamUrl.url?.trim()) {
+      throw new Error("stream ticket URL is empty");
+    }
+    return streamUrl.url;
   }
 
   /**
