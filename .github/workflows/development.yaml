@@ -1,10 +1,10 @@
 name: Publish Dev Release to NPM
 
-on:
-  push:
-    branches:
-      - dev
-  workflow_dispatch:
+#on:
+ # push:
+ #   branches:
+  #    - dev
+#  workflow_dispatch:
 
 permissions:
   contents: read
