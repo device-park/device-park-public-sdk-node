@@ -1,54 +1,92 @@
-name: Publish Dev Release to NPM
+
+name: Publish Dev Release to CodeArtifact
 
 on:
   push:
     branches:
-      - dev
+      - dev-package-push-npmjs
   workflow_dispatch:
 
 permissions:
   contents: read
-  id-token: write # NPM Provenance için gerekli
 
 jobs:
   publish-dev:
     runs-on: ubuntu-latest
 
+    env:
+      AWS_REGION: eu-west-1
+      AWS_ACCOUNT_ID: "213855680807"
+      DOMAIN_NAME: device-park
+      REPOSITORY_NAME: npm-store
+      CODEARTIFACT_URL: https://device-park-213855680807.d.codeartifact.eu-west-1.amazonaws.com/npm/npm-store/
+
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '22'
-          registry-url: 'https://registry.npmjs.org/'
+          node-version: 22
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_DEV_CA_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_DEV_CA_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Configure npm for CodeArtifact
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TOKEN=$(aws codeartifact get-authorization-token \
+            --domain "$DOMAIN_NAME" \
+            --domain-owner "$AWS_ACCOUNT_ID" \
+            --region "$AWS_REGION" \
+            --query authorizationToken \
+            --output text)
+
+          echo "@device-park:registry=${CODEARTIFACT_URL}" > .npmrc
+
+          echo "//device-park-213855680807.d.codeartifact.eu-west-1.amazonaws.com/npm/npm-store/:_authToken=${TOKEN}" >> .npmrc
+
+          echo "//device-park-213855680807.d.codeartifact.eu-west-1.amazonaws.com/npm/npm-store/:always-auth=true" >> .npmrc
 
       - name: Generate Dev Version
-        id: get_dev_version
+        shell: bash
         run: |
-          
-          BASE_VERSION=$(node -p "require('./package.json').version.split('-')[0]")
-          TIMESTAMP=$(date +'%Y%m%d%H%M')
-          COMMIT_HASH=$(git rev-parse --short HEAD)
-          
-          
-          DEV_VERSION="${BASE_VERSION}-dev.${TIMESTAMP}.${COMMIT_HASH}"
-          
-          echo "DEV_VERSION=$DEV_VERSION" >> $GITHUB_ENV
-          echo "Generated Dev Version: $DEV_VERSION"
+          set -euo pipefail
 
-      - name: Update package.json Version Locally
+          BASE_VERSION=$(node -p "require('./package.json').version.split('-')[0]")
+          TIMESTAMP=$(date -u +'%Y%m%d%H%M')
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+
+          DEV_VERSION="${BASE_VERSION}-dev.${TIMESTAMP}.${GITHUB_RUN_NUMBER}.${COMMIT_HASH}"
+
+          echo "DEV_VERSION=${DEV_VERSION}" >> "$GITHUB_ENV"
+
+          echo "Generated Dev Version: ${DEV_VERSION}"
+
+      - name: Update package version locally
         run: |
-          # Git tag'i oluşturmadan ve commit atmadan sadece bu runner ortamındaki package.json'ı güncelle
-          npm version ${{ env.DEV_VERSION }} --no-git-tag-version
+          npm version "${DEV_VERSION}" --no-git-tag-version
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Publish Dev Package to NPM
-        run: npm publish --tag dev --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Type check
+        run: npm run check
+
+      - name: Build package
+        run: npm run build
+
+      - name: Publish Dev Package to CodeArtifact
+        run: |
+          npm publish \
+            --registry="${CODEARTIFACT_URL}" \
+            --tag dev
