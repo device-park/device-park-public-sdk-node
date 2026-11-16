@@ -69,6 +69,7 @@ export interface Session {
   createdAt: string | null;
   updatedAt: string | null;
   dataAccessEndDate: string | null;
+  expiresAt: string | null;
 }
 
 export interface ScreenRecord {

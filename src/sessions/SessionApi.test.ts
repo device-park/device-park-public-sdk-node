@@ -52,6 +52,24 @@ test("SessionApi.streamUrl rejects an empty session id", async () => {
   await assert.rejects(() => new SessionApi(client).streamUrl(" "));
 });
 
+test("SessionApi.streamTicketUrl posts for a ticket and returns the URL without an access token", async () => {
+  const { client, calls } = createClient(() =>
+    new Response(JSON.stringify({ url: "wss://stream.example/ws/abc/stream?ticket=t1" }), { status: 200 }));
+
+  const url = await new SessionApi(client).streamTicketUrl("abc");
+
+  assert.equal(url, "wss://stream.example/ws/abc/stream?ticket=t1");
+  assert.equal(calls.length, 1);
+  assert.ok(calls[0]?.url.endsWith("/session/api/v2/public/sessions/abc/stream-ticket"));
+  assert.equal(calls[0]?.authorization, "Bearer token-1");
+});
+
+test("SessionApi.streamTicketUrl rejects an empty session id and an empty URL", async () => {
+  const { client } = createClient(() => new Response("{}", { status: 200 }));
+  await assert.rejects(() => new SessionApi(client).streamTicketUrl(" "));
+  await assert.rejects(() => new SessionApi(client).streamTicketUrl("abc"));
+});
+
 test("a 401 response renews the access token and retries the request once", async () => {
   const { client, calls } = createClient((_call, index) =>
     index === 0 ? new Response("expired", { status: 401 }) : new Response(JSON.stringify({ url: "wss://s/x" }), { status: 200 }));
